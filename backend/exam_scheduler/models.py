@@ -3,10 +3,10 @@ from mongoengine import (
     StringField,
     IntField,
     DateField,
-    DateTimeField
+    DateTimeField,
+    ListField
 )
 from datetime import datetime
-
 
 
 class Course(Document):
@@ -17,22 +17,22 @@ class Course(Document):
         regex=r'^[A-Z]{2,4}[0-9]{3}$'
     )
 
-    course_name = StringField(
-        required=True,
-        max_length=100
+    course_name = StringField(required=True)
+
+    faculty = StringField(required=True)
+
+    students = ListField(
+        StringField()
     )
 
-    faculty = StringField(
-        required=True,
-        max_length=100
+   
+    student_count = IntField(
+        default=0
     )
 
     meta = {
         "collection": "courses"
     }
-
-    def __str__(self):
-        return self.course_name
 
 
 class Room(Document):
@@ -43,22 +43,62 @@ class Room(Document):
         regex=r'^[A-Z][0-9]{3}$'
     )
 
-    capacity = IntField(
-        required=True
-    )
+    capacity = IntField(required=True)
 
     meta = {
         "collection": "rooms"
     }
 
-    def __str__(self):
-        return self.room_id
 
+class Faculty(Document):
+
+    faculty_id = StringField(
+        required=True,
+        unique=True
+    )
+
+    faculty_name = StringField(required=True)
+
+    department = StringField(required=True)
+
+    available_days = ListField(
+        StringField()
+    )
+
+    unavailable_dates = ListField(
+        DateField()
+    )
+
+    meta = {
+        "collection": "faculties"
+    }
+
+
+class Student(Document):
+
+    student_id = StringField(
+        required=True,
+        unique=True
+    )
+
+    student_name = StringField(required=True)
+
+    department = StringField(required=True)
+
+    enrolled_courses = ListField(
+        StringField()
+    )
+
+    meta = {
+        "collection": "students"
+    }
 
 
 class Timetable(Document):
 
     course_code = StringField(required=True)
+
+    faculty = StringField(required=True)
 
     room_id = StringField(required=True)
 
@@ -73,29 +113,3 @@ class Timetable(Document):
     meta = {
         "collection": "timetable"
     }
-
-
-
-class Faculty(Document):
-
-    faculty_id = StringField(
-        required=True,
-        unique=True
-    )
-
-    faculty_name = StringField(
-        required=True,
-        max_length=100
-    )
-
-    department = StringField(
-        required=True,
-        max_length=100
-    )
-
-    meta = {
-        "collection": "faculties"
-    }
-
-    def __str__(self):
-        return self.faculty_name

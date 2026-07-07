@@ -1,3 +1,4 @@
 from django.contrib import admin
 
-# Register your models here.
+# MongoEngine models are not registered with Django admin.
+# This project uses custom REST APIs and MongoDB collections.

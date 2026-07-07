@@ -1,7 +1,13 @@
 from datetime import datetime, timedelta
+from threading import Thread
 
-from .exceptions import ConflictException
-from .models import Course, Room, Timetable
+from .models import (
+    Course,
+    Room,
+    Faculty,
+    Student,
+    Timetable
+)
 
 
 class ScheduleConflictException(Exception):
@@ -12,64 +18,171 @@ class ScheduleEngine:
 
     def __init__(self):
 
-        self.rooms = list(Room.objects)
+        self.rooms = sorted(
+            list(Room.objects()),
+            key=lambda room: room.capacity
+        )
 
-        self.courses = list(Course.objects)
+        self.courses = list(Course.objects())
+        self.faculties = list(Faculty.objects())
+        self.students = list(Student.objects())
 
         self.time_slots = [
             "10:00",
             "14:00"
         ]
 
+    # -------------------------------------------------
+    # Faculty Availability
+    # -------------------------------------------------
+
+    def is_faculty_available(self, faculty_name, exam_date):
+
+        faculty = Faculty.objects(
+            faculty_name=faculty_name
+        ).first()
+
+        if faculty is None:
+            return False
+
+        weekday = exam_date.strftime("%A")
+
+        if weekday not in faculty.available_days:
+            return False
+
+        if exam_date in faculty.unavailable_dates:
+            return False
+
+        return True
+
+    # -------------------------------------------------
+    # Generate Timetable
+    # -------------------------------------------------
+
     def generate(self):
 
-        # Clear old timetable
-        Timetable.objects.delete()
+        Timetable.objects().delete()
 
         room_schedule = {}
+        faculty_schedule = {}
+        student_schedule = {}
 
         current_date = datetime.today()
 
-        room_index = 0
         slot_index = 0
 
-        if len(self.rooms) == 0:
+        if not self.rooms:
             raise ScheduleConflictException(
                 "No rooms available"
             )
 
-        if len(self.courses) == 0:
+        if not self.courses:
             raise ScheduleConflictException(
                 "No courses available"
             )
 
         for course in self.courses:
 
-            room = self.rooms[room_index]
+            assigned_room = None
 
-            exam_date = current_date.date()
+            while assigned_room is None:
 
-            exam_time = self.time_slots[slot_index]
+                exam_date = current_date.date()
 
-            key = (
-                room.room_id,
-                exam_date,
-                exam_time
-            )
+                exam_time = self.time_slots[slot_index]
 
-            if key in room_schedule:
+                for room in self.rooms:
 
-                raise ScheduleConflictException(
-                    f"Conflict in room {room.room_id}"
-                )
+                    # Capacity Check
+                    if room.capacity < course.student_count:
+                        continue
 
-            room_schedule[key] = course.course_code
+                    # Faculty Availability
+                    if not self.is_faculty_available(
+                        course.faculty,
+                        exam_date
+                    ):
+                        continue
+
+                    room_key = (
+                        room.room_id,
+                        exam_date,
+                        exam_time
+                    )
+
+                    faculty_key = (
+                        course.faculty,
+                        exam_date,
+                        exam_time
+                    )
+
+                    # Room Conflict
+                    if room_key in room_schedule:
+                        continue
+
+                    # Faculty Conflict
+                    if faculty_key in faculty_schedule:
+                        continue
+
+                    # Student Conflict
+                    clash = False
+
+                    for student in course.students:
+
+                        student_key = (
+                            student,
+                            exam_date,
+                            exam_time
+                        )
+
+                        if student_key in student_schedule:
+                            clash = True
+                            break
+
+                    if clash:
+                        continue
+
+                    assigned_room = room
+
+                    room_schedule[room_key] = course.course_code
+
+                    faculty_schedule[faculty_key] = course.course_code
+
+                    for student in course.students:
+
+                        student_schedule[
+                            (
+                                student,
+                                exam_date,
+                                exam_time
+                            )
+                        ] = course.course_code
+
+                    break
+
+                # No room found → Try next slot/day
+                if assigned_room is None:
+
+                    slot_index += 1
+
+                    if slot_index >= len(self.time_slots):
+
+                        slot_index = 0
+
+                        current_date += timedelta(days=1)
 
             Timetable(
+
                 course_code=course.course_code,
-                room_id=room.room_id,
+
+                faculty=course.faculty,
+
+                room_id=assigned_room.room_id,
+
                 exam_date=exam_date,
+
                 exam_time=exam_time
+
             ).save()
 
             slot_index += 1
@@ -78,43 +191,133 @@ class ScheduleEngine:
 
                 slot_index = 0
 
-                room_index += 1
+                current_date += timedelta(days=1)
+# ====================================================
+# ROOM CONFLICT
+# ====================================================
 
-                if room_index >= len(self.rooms):
+def room_conflict():
 
-                    room_index = 0
+    conflicts = []
 
-                    current_date += timedelta(days=1)
+    occupied = {}
 
+    for exam in Timetable.objects():
 
-def check_conflicts(timetable):
+        key = (
+            exam.room_id,
+            exam.exam_date,
+            exam.exam_time
+        )
 
-    room_slots = {}
+        if key in occupied:
 
-    faculty_slots = {}
-
-    for exam in timetable:
-
-        slot = f"{exam.exam_date}_{exam.exam_time}"
-
-        if (exam.room_id, slot) in room_slots:
-
-            raise ConflictException(
-                f"Room conflict: {exam.room_id}"
+            conflicts.append(
+                f"Room conflict : {exam.room_id}"
             )
 
-        room_slots[(exam.room_id, slot)] = exam.course_code
+        else:
 
-        faculty = getattr(exam, "faculty", None)
+            occupied[key] = True
 
-        if faculty:
+    return conflicts
 
-            if (faculty, slot) in faculty_slots:
 
-                raise ConflictException(
-                    f"Faculty conflict: {faculty}"
+# ====================================================
+# FACULTY CONFLICT
+# ====================================================
+
+def faculty_conflict():
+
+    conflicts = []
+
+    occupied = {}
+
+    for exam in Timetable.objects():
+
+        key = (
+            exam.faculty,
+            exam.exam_date,
+            exam.exam_time
+        )
+
+        if key in occupied:
+
+            conflicts.append(
+                f"Faculty conflict : {exam.faculty}"
+            )
+
+        else:
+
+            occupied[key] = True
+
+    return conflicts
+
+
+# ====================================================
+# STUDENT CONFLICT
+# ====================================================
+
+def student_conflict():
+
+    conflicts = []
+
+    occupied = {}
+
+    students = Student.objects()
+    timetable = Timetable.objects()
+
+    for student in students:
+
+        for exam in timetable:
+
+            if exam.course_code in student.enrolled_courses:
+
+                key = (
+                    student.student_id,
+                    exam.exam_date,
+                    exam.exam_time
                 )
 
-            faculty_slots[(faculty, slot)] = exam.course_code
+                if key in occupied:
 
-    return True
+                    conflicts.append(
+                        f"Student conflict : {student.student_name}"
+                    )
+
+                else:
+
+                    occupied[key] = True
+
+    return conflicts
+
+
+# ====================================================
+# MULTITHREADED CONFLICT CHECK
+# ====================================================
+
+def check_conflicts():
+
+    conflicts = []
+
+    t1 = Thread(
+        target=lambda: conflicts.extend(room_conflict())
+    )
+
+    t2 = Thread(
+        target=lambda: conflicts.extend(faculty_conflict())
+    )
+
+    t3 = Thread(
+        target=lambda: conflicts.extend(student_conflict())
+    )
+
+    t1.start()
+    t2.start()
+    t3.start()
+
+    t1.join()
+    t2.join()
+    t3.join()
+
+    return conflicts

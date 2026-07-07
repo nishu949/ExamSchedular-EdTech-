@@ -1,69 +1,45 @@
 from django.urls import path
-from .views import *
+
+from . import views
 
 urlpatterns = [
 
-    path(
-        "courses/",
-        courses
-    ),
+    # Course
+    path("courses/", views.courses),
+    path("courses/<str:id>/", views.delete_course),
 
-    path(
-        "courses/<int:id>/",
-        delete_course
-    ),
+    # Room
+    path("rooms/", views.rooms),
+    path("rooms/<str:id>/", views.delete_room),
 
-    path(
-        "rooms/",
-        rooms
-    ),
+    # Faculty
+    path("faculties/", views.faculties),
+    path("faculties/<str:id>/", views.delete_faculty),
 
-    path(
-        "rooms/<int:id>/",
-        delete_room
-    ),
+    # Student
+    path("students/", views.students),
+    path("students/<str:id>/", views.delete_student),
 
-    path(
-        "timetable/",
-        timetable
-    ),
+    # Timetable
+    path("timetable/", views.timetable),
 
-    path(
-        "generate/",
-        generate_timetable
-    ),
+    # Scheduler
+    path("generate/", views.generate_timetable),
 
-    path(
-        "conflicts/",
-        detect_conflicts
-    ),
+    # Dashboard
+    path("dashboard/", views.dashboard),
 
-    path(
-        "student-schedule/",
-        student_schedule
-    ),
+    # Search
+    path("search/", views.search_timetable),
 
-    path(
-        "search/",
-        search_timetable
-    ),
+    # Student Schedule
+    path("student-schedule/", views.student_schedule),
 
-    path(
-        "report/",
-        download_report
-    ),
-    path(
-        "faculties/", 
-         faculties
-         ),
+    # Conflict Detection
+    path("conflicts/", views.detect_conflicts),
 
-    path(
-        "faculties/<int:id>/",
-      delete_faculty
-      ),
-
-    path(
-    "dashboard/",
-    dashboard
-),
+    # Reports
+    path("report/", views.download_report),
+    path("report/room/", views.room_report),
+    path("report/date/", views.date_report),
 ]
