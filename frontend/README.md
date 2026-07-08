@@ -1,5 +1,3 @@
-# React + Vite
-# Project Description 
 # University Exam Timetable Generator & Conflict Resolver
 
 ## Project Overview
@@ -90,7 +88,6 @@ The scheduler uses Python data structures and algorithms to efficiently manage s
 - MongoDB
 
 ### Frontend
-- React vite 
 - Admin Scheduler UI
 - Student Timetable Interface
 
@@ -160,20 +157,6 @@ Stores generated examination schedules.
 - Advanced scheduling algorithms.
 - Real-time timetable modification notifications.
 - Cloud deployment for university-wide usage.
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
 # installation command 
  1.npm create vite@latest frontend   
  2.npm install axios react-router-dom
@@ -182,4 +165,3 @@ If you are developing a production application, we recommend using TypeScript wi
  5.npm install tailwindcss@latest @tailwindcss/vite@latest
  6.npm install -D tailwindcss@3.4.17 postcss autoprefixer 
  7.npm install lucide-react framer-motion recharts react-hot-toast
- 
