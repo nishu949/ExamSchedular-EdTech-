@@ -1,41 +1,53 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
+import DashboardLayout from "./layouts/DashboardLayout";
+
 import Dashboard from "./pages/Dashboard";
 import Courses from "./pages/Courses";
 import Rooms from "./pages/Rooms";
-import Scheduler from "./pages/Scheduler";
-import StudentView from "./pages/StudentView";
+import Faculty from "./pages/Faculty";
+import Students from "./pages/Students";
+import Timetable from "./pages/Timetable";
+import Reports from "./pages/Reports";
+import ConflictReport from "./pages/ConflictReport";
+import Settings from "./pages/Settings";
 
 function App() {
+
   return (
+
     <BrowserRouter>
-      <Routes>
 
-        <Route path="/" element={<Dashboard />} />
+      <DashboardLayout>
 
-        <Route
-          path="/courses"
-          element={<Courses />}
-        />
+        <Routes>
 
-        <Route
-          path="/rooms"
-          element={<Rooms />}
-        />
+          <Route path="/" element={<Dashboard />} />
 
-        <Route
-          path="/scheduler"
-          element={<Scheduler />}
-        />
+          <Route path="/courses" element={<Courses />} />
 
-        <Route
-          path="/student"
-          element={<StudentView />}
-        />
+          <Route path="/rooms" element={<Rooms />} />
 
-      </Routes>
+          <Route path="/faculty" element={<Faculty />} />
+
+          <Route path="/students" element={<Students />} />
+
+          <Route path="/timetable" element={<Timetable />} />
+
+          <Route path="/reports" element={<Reports />} />
+
+          <Route path="/conflicts" element={<ConflictReport />} />
+
+          <Route path="/settings" element={<Settings />} />
+
+        </Routes>
+
+      </DashboardLayout>
+
     </BrowserRouter>
+
   );
+
 }
 
 export default App;
