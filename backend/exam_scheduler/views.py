@@ -361,26 +361,31 @@ def generate_timetable(request):
 @api_view(["GET"])
 def student_schedule(request):
 
-    course_code = request.GET.get("course_code")
+    student_id = request.GET.get("student_id")
 
-    if course_code:
-
-        exams = Timetable.objects(
-
-            course_code=course_code
-
+    if not student_id:
+        return Response(
+            {"error": "student_id is required"},
+            status=400
         )
 
-    else:
+    student = Student.objects(
+        student_id=student_id
+    ).first()
 
-        exams = Timetable.objects()
+    if student is None:
+        return Response(
+            {"error": "Student not found"},
+            status=404
+        )
+
+    exams = Timetable.objects(
+        course_code__in=student.enrolled_courses
+    )
 
     serializer = TimetableSerializer(
-
         exams,
-
         many=True
-
     )
 
     return Response(serializer.data)
@@ -486,7 +491,18 @@ def download_report(request):
         "Time"
     ]]
 
-    for exam in Timetable.objects():
+    # Get all timetable records
+    exams = Timetable.objects()
+
+    # If no timetable exists
+    if exams.count() == 0:
+        return Response(
+            {"message": "No timetable available"},
+            status=404
+        )
+
+    # Add timetable rows
+    for exam in exams:
 
         data.append([
 
@@ -506,17 +522,17 @@ def download_report(request):
 
     table.setStyle(TableStyle([
 
-        ("BACKGROUND", (0,0), (-1,0), colors.darkblue),
+        ("BACKGROUND", (0, 0), (-1, 0), colors.darkblue),
 
-        ("TEXTCOLOR", (0,0), (-1,0), colors.whitesmoke),
+        ("TEXTCOLOR", (0, 0), (-1, 0), colors.whitesmoke),
 
-        ("GRID", (0,0), (-1,-1), 1, colors.black),
+        ("GRID", (0, 0), (-1, -1), 1, colors.black),
 
-        ("BACKGROUND", (0,1), (-1,-1), colors.beige),
+        ("BACKGROUND", (0, 1), (-1, -1), colors.beige),
 
-        ("ALIGN", (0,0), (-1,-1), "CENTER"),
+        ("ALIGN", (0, 0), (-1, -1), "CENTER"),
 
-        ("BOTTOMPADDING", (0,0), (-1,0), 10),
+        ("BOTTOMPADDING", (0, 0), (-1, 0), 10),
 
     ]))
 
@@ -525,21 +541,26 @@ def download_report(request):
     return response
 
 
-
 # ROOM REPORT
 @api_view(["GET"])
 def room_report(request):
 
     room = request.GET.get("room")
 
-    serializer = TimetableSerializer(
-
-        Timetable.objects(
+    if room:
+        exams = Timetable.objects(
             room_id=room
-        ),
+        )
+    else:
+        exams = Timetable.objects().order_by(
+            "room_id",
+            "exam_date",
+            "exam_time"
+        )
 
+    serializer = TimetableSerializer(
+        exams,
         many=True
-
     )
 
     return Response(serializer.data)
@@ -551,14 +572,19 @@ def date_report(request):
 
     date = request.GET.get("date")
 
-    serializer = TimetableSerializer(
-
-        Timetable.objects(
+    if date:
+        exams = Timetable.objects(
             exam_date=date
-        ),
+        )
+    else:
+        exams = Timetable.objects().order_by(
+            "exam_date",
+            "exam_time"
+        )
 
+    serializer = TimetableSerializer(
+        exams,
         many=True
-
     )
 
     return Response(serializer.data)
