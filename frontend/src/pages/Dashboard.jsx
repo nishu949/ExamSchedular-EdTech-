@@ -1,69 +1,173 @@
 import { useEffect, useState } from "react";
 import api from "../services/api";
+import UpcomingExams from "../components/dashboard/UpcomingExams";
+import ConflictStatus from "../components/dashboard/ConflictStatus";
+import RecentActivity from "../components/dashboard/RecentActivity";
+import SystemStatus from "../components/dashboard/SystemStatus";
+import Hero from "../components/dashboard/Hero";
+import StatCard from "../components/dashboard/StatCard";
+import QuickAction from "../components/dashboard/QuickAction";
+import RecentTimetable from "../components/dashboard/RecentTimetable";
+import ScheduleChart from "../components/dashboard/ScheduleChart";
+
+import {
+  BookOpen,
+  Building2,
+  GraduationCap,
+  Users,
+} from "lucide-react";
 
 export default function Dashboard() {
 
-    const [stats, setStats] = useState({
-        courses: 0,
-        rooms: 0,
-        timetable: 0
-    });
+  const [stats, setStats] = useState({
+    courses: 0,
+    rooms: 0,
+    timetable: 0,
+    faculty: 0,
+    students: 0,
+  });
 
-    const loadDashboard = async () => {
-        try {
-            const res = await api.get("/dashboard/");
-            setStats(res.data);
-        } catch (err) {
-            console.error(err);
-            alert("Unable to load dashboard");
-        }
-    };
+  const [timetable, setTimetable] = useState([]);
 
-    useEffect(() => {
-        loadDashboard();
-    }, []);
+const loadDashboard = async () => {
 
-    const generateTimetable = async () => {
-        try {
-            await api.post("/generate/");
-            alert("Timetable Generated Successfully");
-            loadDashboard();
-        } catch (err) {
-            console.error(err);
-            alert("Generation Failed");
-        }
-    };
+    try {
 
-    const downloadReport = () => {
-        window.open("http://127.0.0.1:8000/api/report/");
-    };
+        const dashboardRes = await api.get("/dashboard/");
 
-    return (
+        const timetableRes = await api.get("/timetable/");
 
-        <div className="container">
+        const conflictRes = await api.get("/conflicts/");
 
-            <h1>Exam Scheduler Dashboard</h1>
+        setStats({
 
-            <h3>Total Courses : {stats.courses}</h3>
+            courses: dashboardRes.data.courses,
 
-            <h3>Total Rooms : {stats.rooms}</h3>
+            rooms: dashboardRes.data.rooms,
 
-            <h3>Total Exams : {stats.timetable}</h3>
+            faculty: dashboardRes.data.faculties,
 
-            <br/>
+            students: dashboardRes.data.students,
 
-            <button onClick={generateTimetable}>
-                Generate Timetable
-            </button>
+            timetable: dashboardRes.data.timetable,
 
-            <button
-                onClick={downloadReport}
-                style={{marginLeft:"10px"}}
-            >
-                Download PDF
-            </button>
+            conflict:
 
-        </div>
+                conflictRes.data.status
+
+        });
+
+        setTimetable(timetableRes.data);
+
+    }
+
+    catch(err){
+
+        console.log(err);
+
+    }
+
+};
+
+  useEffect(() => {
+    loadDashboard();
+  }, []);
+
+  const generateTimetable = async () => {
+
+    try {
+
+      await api.post("/generate/");
+
+      alert("Timetable Generated Successfully");
+
+      loadDashboard();
+
+    } catch (err) {
+
+      console.error(err);
+
+      alert("Generation Failed");
+    }
+  };
+
+const downloadReport = () => {
+
+    window.open(
+
+        "http://127.0.0.1:8000/api/report/download/"
 
     );
+
+};
+
+  return (
+
+    <div className="space-y-8">
+
+      <Hero />
+
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+
+<StatCard
+    title="Courses"
+    value={stats.courses}
+    icon={<BookOpen size={26} className="text-blue-600" />}
+    color="bg-blue-100"
+/>
+
+<StatCard
+    title="Rooms"
+    value={stats.rooms}
+    icon={<Building2 size={26} className="text-green-600" />}
+    color="bg-green-100"
+/>
+
+<StatCard
+    title="Faculty"
+    value={stats.faculty}
+    icon={<GraduationCap size={26} className="text-orange-600" />}
+    color="bg-orange-100"
+/>
+
+<StatCard
+    title="Students"
+    value={stats.students}
+    icon={<Users size={26} className="text-purple-600" />}
+    color="bg-purple-100"
+/>
+
+      </div>
+
+      <QuickAction
+        onGenerate={generateTimetable}
+        onDownload={downloadReport}
+      />
+
+    <div className="grid xl:grid-cols-3 gap-6">
+
+    <div className="xl:col-span-2">
+
+        <RecentTimetable timetable={timetable} />
+
+    </div>
+
+    <UpcomingExams timetable={timetable} />
+
+</div>
+
+<div className="grid xl:grid-cols-3 gap-6">
+
+    <ConflictStatus status={stats.conflict} />
+
+    <SystemStatus />
+
+    <RecentActivity timetable={timetable} />
+
+</div>
+
+    </div>
+
+  );
+
 }

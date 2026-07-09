@@ -12,42 +12,67 @@ import Reports from "./pages/Reports";
 import ConflictReport from "./pages/ConflictReport";
 import Settings from "./pages/Settings";
 
-function App() {
+export default function App() {
 
-  return (
+    return (
 
-    <BrowserRouter>
+        <BrowserRouter>
 
-      <DashboardLayout>
+            <Routes>
 
-        <Routes>
+                <Route element={<DashboardLayout />}>
 
-          <Route path="/" element={<Dashboard />} />
+                    <Route
+                        path="/"
+                        element={<Dashboard />}
+                    />
 
-          <Route path="/courses" element={<Courses />} />
+                    <Route
+                        path="/courses"
+                        element={<Courses />}
+                    />
 
-          <Route path="/rooms" element={<Rooms />} />
+                    <Route
+                        path="/rooms"
+                        element={<Rooms />}
+                    />
 
-          <Route path="/faculty" element={<Faculty />} />
+                    <Route
+                        path="/faculty"
+                        element={<Faculty />}
+                    />
 
-          <Route path="/students" element={<Students />} />
+                    <Route
+                        path="/students"
+                        element={<Students />}
+                    />
 
-          <Route path="/timetable" element={<Timetable />} />
+                    <Route
+                        path="/timetable"
+                        element={<Timetable />}
+                    />
 
-          <Route path="/reports" element={<Reports />} />
+                    <Route
+                        path="/reports"
+                        element={<Reports />}
+                    />
 
-          <Route path="/conflicts" element={<ConflictReport />} />
+                    <Route
+                        path="/conflicts"
+                        element={<ConflictReport />}
+                    />
 
-          <Route path="/settings" element={<Settings />} />
+                    <Route
+                        path="/settings"
+                        element={<Settings />}
+                    />
 
-        </Routes>
+                </Route>
 
-      </DashboardLayout>
+            </Routes>
 
-    </BrowserRouter>
+        </BrowserRouter>
 
-  );
+    );
 
 }
-
-export default App;

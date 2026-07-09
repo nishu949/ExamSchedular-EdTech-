@@ -1,162 +1,193 @@
 import { useEffect, useState } from "react";
+
 import api from "../services/api";
 
-function Courses() {
+import CourseTable from "../components/courses/CourseTable";
+import CourseForm from "../components/courses/CourseForm";
 
-  const [courses, setCourses] = useState([]);
+export default function Courses() {
 
-  const [form, setForm] = useState({
-    course_code: "",
-    course_name: "",
-    faculty: ""
-  });
+    const [courses, setCourses] = useState([]);
 
-  const loadCourses = async () => {
-    const res = await api.get("/courses/");
-    setCourses(res.data);
-  };
+    const [editing, setEditing] = useState(null);
 
-  useEffect(() => {
-    loadCourses();
-  }, []);
+    const [showForm, setShowForm] = useState(false);
+    const [search, setSearch] = useState("");
+    const filteredCourses = courses.filter((course) =>
+    course.course_code.toLowerCase().includes(search.toLowerCase()) ||
+    course.course_name.toLowerCase().includes(search.toLowerCase())
+);
 
-  const addCourse = async () => {
+    const loadCourses = async () => {
 
-    if (
-      !form.course_code ||
-      !form.course_name ||
-      !form.faculty
-    ) {
-      alert("Fill all fields");
-      return;
-    }
+        try {
 
-    await api.post(
-      "/courses/",
-      form
-    );
+            const res = await api.get("/courses/");
 
-    setForm({
-      course_code: "",
-      course_name: "",
-      faculty: ""
-    });
+            setCourses(res.data);
 
-    loadCourses();
-  };
+        } catch (err) {
 
-  const deleteCourse = async (id) => {
+            console.log(err);
 
-    await api.delete(
-      `/courses/${id}/`
-    );
+        }
 
-    loadCourses();
-  };
+    };
 
-  return (
+    useEffect(() => {
 
-    <div
-      style={{
-        padding: "30px"
-      }}
-    >
+        loadCourses();
 
-      <h1>
-        Course Management
-      </h1>
+    }, []);
 
-      <div>
+    const addCourse = async (data) => {
 
-        <input
-          placeholder="Course Code"
-          value={form.course_code}
-          onChange={(e)=>
-            setForm({
-              ...form,
-              course_code:e.target.value
-            })
-          }
-        />
+        try {
 
-        <input
-          placeholder="Course Name"
-          value={form.course_name}
-          onChange={(e)=>
-            setForm({
-              ...form,
-              course_name:e.target.value
-            })
-          }
-        />
+            await api.post("/courses/", data);
 
-        <input
-          placeholder="Faculty"
-          value={form.faculty}
-          onChange={(e)=>
-            setForm({
-              ...form,
-              faculty:e.target.value
-            })
-          }
-        />
+            setShowForm(false);
 
-        <button onClick={addCourse}>
-          Add Course
-        </button>
+            loadCourses();
 
-      </div>
+        }
 
-      <br />
+        catch (err) {
 
-      <table border="1">
+            console.log(err);
 
-        <thead>
+            alert("Unable to add course");
 
-          <tr>
-            <th>ID</th>
-            <th>Code</th>
-            <th>Name</th>
-            <th>Faculty</th>
-            <th>Action</th>
-          </tr>
+        }
 
-        </thead>
+    };
 
-        <tbody>
+    const updateCourse = async (data) => {
 
-          {courses.map((c)=>(
+        try {
 
-            <tr key={c.id}>
+            await api.put(
 
-              <td>{c.id}</td>
-              <td>{c.course_code}</td>
-              <td>{c.course_name}</td>
-              <td>{c.faculty}</td>
+                `/courses/${editing.id}/`,
 
-              <td>
+                data
+
+            );
+
+            setEditing(null);
+
+            setShowForm(false);
+
+            loadCourses();
+
+        }
+
+        catch (err) {
+
+            console.log(err);
+
+            alert("Unable to update");
+
+        }
+
+    };
+
+    const deleteCourse = async (id) => {
+
+        if (!window.confirm("Delete this course?"))
+
+            return;
+
+        try {
+
+            await api.delete(`/courses/${id}/`);
+
+            loadCourses();
+
+        }
+
+        catch (err) {
+
+            console.log(err);
+
+        }
+
+    };
+
+    return (
+
+        <div className="space-y-6">
+
+            <div className="flex justify-between items-center">
+
+                <h1 className="text-3xl font-bold">
+
+                    Courses
+
+                </h1>
 
                 <button
-                  onClick={()=>
-                    deleteCourse(c.id)
-                  }
+
+                    onClick={() => {
+
+                        setEditing(null);
+
+                        setShowForm(true);
+
+                    }}
+
+                    className="bg-blue-600 text-white px-5 py-2 rounded-lg"
+
                 >
-                  Delete
+
+                    + Add Course
+
                 </button>
 
-              </td>
+            </div>
 
-            </tr>
+            {showForm && (
 
-          ))}
+                <CourseForm
 
-        </tbody>
+                    initialData={editing}
 
-      </table>
+                    onCancel={() => {
 
-    </div>
+                        setShowForm(false);
 
-  );
+                        setEditing(null);
+
+                    }}
+
+                    onSubmit={editing ? updateCourse : addCourse}
+
+                />
+
+            )}
+<div className="flex justify-between items-center gap-4">
+
+    <input
+        type="text"
+        placeholder="Search by course code or course name..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        className="w-full md:w-96 rounded-lg border border-slate-300 px-4 py-2 focus:border-blue-500 focus:outline-none"
+    />
+
+</div>
+
+          <CourseTable
+    courses={filteredCourses}
+    onEdit={(course) => {
+        setEditing(course);
+        setShowForm(true);
+    }}
+    onDelete={deleteCourse}
+/>
+
+        </div>
+
+    );
+
 }
-
-export default Courses;

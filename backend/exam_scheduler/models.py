@@ -102,7 +102,7 @@ class Timetable(Document):
 
     room_id = StringField(required=True)
 
-    exam_date = DateField(required=True)
+    exam_date = DateField(required=True)    
 
     exam_time = StringField(required=True)
 

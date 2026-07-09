@@ -1,26 +1,37 @@
+import { Outlet } from "react-router-dom";
+
 import Sidebar from "../components/layout/Sidebar";
 import Navbar from "../components/layout/Navbar";
+import Footer from "../components/layout/Footer";
 
-export default function DashboardLayout({ children }) {
-  return (
-    <div className="flex min-h-screen bg-[#F5F7FB]">
+export default function DashboardLayout() {
 
-      <Sidebar />
+    return (
 
-      <div className="flex-1 flex flex-col">
+        <div className="min-h-screen bg-slate-100">
 
-        <div className="p-6">
+            <div className="flex">
 
-          <Navbar />
+                <Sidebar />
 
-          <div className="mt-6">
-            {children}
-          </div>
+                <div className="flex flex-col flex-1 min-h-screen">
+
+                    <Navbar />
+
+                    <main className="flex-1 p-8">
+
+                        <Outlet />
+
+                    </main>
+
+                    <Footer />
+
+                </div>
+
+            </div>
 
         </div>
 
-      </div>
+    );
 
-    </div>
-  );
 }

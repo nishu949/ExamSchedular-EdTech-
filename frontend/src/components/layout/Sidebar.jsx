@@ -1,117 +1,100 @@
 import {
-  LayoutDashboard,
-  BookOpen,
-  Building2,
-  Users,
-  GraduationCap,
-  CalendarDays,
-  FileText,
-  ShieldAlert,
-  Settings,
+    LayoutDashboard,
+    BookOpen,
+    Building2,
+    Users,
+    GraduationCap,
+    CalendarDays,
+    FileText,
+    ShieldAlert,
+    Settings,
 } from "lucide-react";
 
 import { NavLink } from "react-router-dom";
 
 const menuItems = [
-  {
-    name: "Dashboard",
-    icon: LayoutDashboard,
-    path: "/",
-  },
-  {
-    name: "Courses",
-    icon: BookOpen,
-    path: "/courses",
-  },
-  {
-    name: "Rooms",
-    icon: Building2,
-    path: "/rooms",
-  },
-  {
-    name: "Faculty",
-    icon: GraduationCap,
-    path: "/faculty",
-  },
-  {
-    name: "Students",
-    icon: Users,
-    path: "/students",
-  },
-  {
-    name: "Timetable",
-    icon: CalendarDays,
-    path: "/timetable",
-  },
-  {
-    name: "Reports",
-    icon: FileText,
-    path: "/reports",
-  },
-  {
-    name: "Conflicts",
-    icon: ShieldAlert,
-    path: "/conflicts",
-  },
-  {
-    name: "Settings",
-    icon: Settings,
-    path: "/settings",
-  },
+    { name: "Dashboard", icon: LayoutDashboard, path: "/" },
+    { name: "Courses", icon: BookOpen, path: "/courses" },
+    { name: "Rooms", icon: Building2, path: "/rooms" },
+    { name: "Faculty", icon: GraduationCap, path: "/faculty" },
+    { name: "Students", icon: Users, path: "/students" },
+    { name: "Timetable", icon: CalendarDays, path: "/timetable" },
+    { name: "Reports", icon: FileText, path: "/reports" },
+    { name: "Conflicts", icon: ShieldAlert, path: "/conflicts" },
+    { name: "Settings", icon: Settings, path: "/settings" },
 ];
 
 export default function Sidebar() {
-  return (
-    <aside className="w-72 min-h-screen bg-gradient-to-b from-[#071B3B] to-[#12336B] text-white shadow-2xl">
 
-      <div className="p-8">
+    return (
 
-        <h1 className="text-2xl font-bold leading-tight">
-          University
-          <br />
-          Scheduler
-        </h1>
+        <aside className="w-64 bg-white border-r border-slate-200 min-h-screen">
 
-        <p className="text-blue-200 text-sm mt-2">
-          Exam Timetable System
-        </p>
+            <div className="px-8 py-8 border-b border-slate-100">
 
-      </div>
+                <div className="flex items-center gap-3">
 
-      <nav className="px-4">
+                    <div className="h-11 w-11 rounded-xl bg-blue-600 flex items-center justify-center text-white font-bold">
 
-        {menuItems.map((item) => {
+                        U
 
-          const Icon = item.icon;
+                    </div>
 
-          return (
+                    <div>
 
-            <NavLink
-              key={item.name}
-              to={item.path}
-              className={({ isActive }) =>
-                `flex items-center gap-4 px-5 py-4 rounded-xl mb-2 transition-all duration-300
-                ${
-                  isActive
-                    ? "bg-blue-600 shadow-lg"
-                    : "hover:bg-white/10"
-                }`
-              }
-            >
+                        <h1 className="text-lg font-bold text-slate-800">
 
-              <Icon size={20} />
+                            UniScheduler
 
-              <span className="font-medium">
-                {item.name}
-              </span>
+                        </h1>
 
-            </NavLink>
+                        <p className="text-xs text-slate-500">
 
-          );
-        })}
+                            Exam Management
 
-      </nav>
+                        </p>
 
-    </aside>
-  );
+                    </div>
+
+                </div>
+
+            </div>
+
+            <nav className="p-4">
+
+                {menuItems.map((item) => {
+
+                    const Icon = item.icon;
+
+                    return (
+
+                        <NavLink
+                            key={item.name}
+                            to={item.path}
+                            className={({ isActive }) =>
+                                `flex items-center gap-3 rounded-lg px-4 py-3 mb-2 text-sm font-medium transition-all
+                                ${
+                                    isActive
+                                        ? "bg-blue-50 text-blue-700 border-l-4 border-blue-600"
+                                        : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+                                }`
+                            }
+                        >
+
+                            <Icon size={19} />
+
+                            {item.name}
+
+                        </NavLink>
+
+                    );
+
+                })}
+
+            </nav>
+
+        </aside>
+
+    );
+
 }
