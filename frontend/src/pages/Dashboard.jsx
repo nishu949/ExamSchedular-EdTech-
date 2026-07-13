@@ -154,7 +154,9 @@ const downloadReport = () => {
         onDownload={downloadReport}
       />
 
-    <div className="grid xl:grid-cols-3 gap-6">
+{/* Timetable + Upcoming Exams */}
+
+<div className="grid xl:grid-cols-3 gap-6">
 
     <div className="xl:col-span-2">
 
@@ -166,13 +168,17 @@ const downloadReport = () => {
 
 </div>
 
+{/* Bottom Section */}
+
 <div className="grid xl:grid-cols-3 gap-6">
 
     <ConflictStatus status={stats.conflict} />
 
-    <SystemStatus />
+    <div className="xl:col-span-2">
 
-    <RecentActivity timetable={timetable} />
+        <RecentActivity timetable={timetable} />
+
+    </div>
 
 </div>
 

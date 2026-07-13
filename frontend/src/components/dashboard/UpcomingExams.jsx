@@ -8,74 +8,105 @@ export default function UpcomingExams({ timetable }) {
 
     return (
 
-        <div className="bg-white rounded-xl border border-slate-200 p-6">
+        <div className="bg-gradient-to-b from-white to-blue-50/30 rounded-2xl border border-blue-100 border-l-[3px] border-r-[3px] border-l-blue-500 border-r-blue-500 shadow-sm overflow-hidden">
 
-            <h2 className="text-lg font-semibold mb-5">
+            {/* Header */}
 
-                Upcoming Exams
+            <div className="flex items-center justify-between px-6 py-5 bg-blue-50/40 border-b border-blue-100">
 
-            </h2>
+                <div>
 
-            {
+                    <h2 className="text-xl font-semibold text-slate-800">
+                        Upcoming Exams
+                    </h2>
 
-                upcoming.length === 0 ?
-
-                (
-
-                    <p className="text-slate-500">
-
-                        No upcoming exams
-
+                    <p className="text-sm text-slate-500 mt-1">
+                        Next scheduled examinations
                     </p>
 
-                )
+                </div>
 
-                :
+                <span className="text-sm font-medium text-blue-600 bg-blue-100 px-3 py-1 rounded-full">
 
-                upcoming.map((exam) => (
+                    {upcoming.length}
 
-                    <div
-                        key={exam.id}
-                        className="flex justify-between items-center py-3 border-b last:border-none"
-                    >
+                </span>
 
-                        <div>
+            </div>
 
-                            <h4 className="font-medium">
+            <div className="p-4 space-y-3">
 
-                                {exam.course_code}
+                {upcoming.length === 0 ? (
 
-                            </h4>
+                    <div className="py-12 text-center">
 
-                            <p className="text-sm text-slate-500">
+                        <div className="w-14 h-14 mx-auto rounded-full bg-slate-100 flex items-center justify-center text-2xl">
 
-                                {exam.room_id}
-
-                            </p>
+                            📅
 
                         </div>
 
-                        <div className="text-right">
+                        <p className="mt-4 font-medium text-slate-700">
 
-                            <p className="text-sm">
+                            No Upcoming Exams
 
-                                {exam.exam_date}
+                        </p>
 
-                            </p>
+                        <p className="text-sm text-slate-500">
 
-                            <p className="text-xs text-slate-500">
+                            Generate a timetable to see upcoming exams.
 
-                                {exam.exam_time}
-
-                            </p>
-
-                        </div>
+                        </p>
 
                     </div>
 
-                ))
+                ) : (
 
-            }
+                    upcoming.map((exam) => (
+
+                        <div
+                            key={exam.id}
+                            className="flex justify-between items-center rounded-xl border border-blue-100 px-4 py-4 hover:bg-blue-50 transition">
+
+                            <div>
+
+                                <h4 className="font-semibold text-slate-800">
+
+                                    {exam.course_code}
+
+                                </h4>
+
+                                <p className="text-sm text-slate-500 mt-1">
+
+                                    Room {exam.room_id}
+
+                                </p>
+
+                            </div>
+
+                            <div className="text-right">
+
+                                <p className="text-sm font-medium text-slate-700">
+
+                                    {exam.exam_date}
+
+                                </p>
+
+                                <span className="inline-block mt-1 text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-md">
+
+                                    {exam.exam_time}
+
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    ))
+
+                )}
+
+            </div>
 
         </div>
 

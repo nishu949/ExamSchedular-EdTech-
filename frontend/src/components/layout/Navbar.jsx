@@ -202,23 +202,6 @@ const handleSearch = async (value) => {
             {/* Right */}
 
             <div className="flex items-center gap-5">
-
-                <button className="relative">
-
-                    <Bell
-                        size={22}
-                        className="text-slate-600"
-                    />
-
-                    <span className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-red-500"></span>
-
-                </button>
-
-                <CalendarDays
-                    size={22}
-                    className="text-slate-600"
-                />
-
                 <div className="flex items-center gap-3">
 
                     <UserCircle
