@@ -10,7 +10,8 @@ import Students from "./pages/Students";
 import Timetable from "./pages/Timetable";
 import Reports from "./pages/Reports";
 import ConflictReport from "./pages/ConflictReport";
-import Settings from "./pages/Settings";
+import StudentView from "./pages/StudentView";
+
 
 export default function App() {
 
@@ -63,9 +64,11 @@ export default function App() {
                     />
 
                     <Route
-                        path="/settings"
-                        element={<Settings />}
+                        path="/student-view"
+                        element={<StudentView />}
                     />
+
+               
 
                 </Route>
 

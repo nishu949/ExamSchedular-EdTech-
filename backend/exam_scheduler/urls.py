@@ -10,15 +10,15 @@ urlpatterns = [
 
     # Room
     path("rooms/", views.rooms),
-    path("rooms/<str:id>/", views.delete_room),
+    path("rooms/<str:id>/", views.room_detail),
 
     # Faculty
     path("faculties/", views.faculties),
-    path("faculties/<str:id>/", views.delete_faculty),
+    path("faculties/<str:id>/", views.faculty_detail),
 
     # Student
     path("students/", views.students),
-    path("students/<str:id>/", views.delete_student),
+    path("students/<str:id>/", views.student_detail),
 
     # Timetable
     path("timetable/", views.timetable),
@@ -30,7 +30,7 @@ urlpatterns = [
     path("dashboard/", views.dashboard),
 
     # Search
-    path("search/", views.search_timetable),
+    path("search/", views.search),
 
     # Student Schedule
     path("student-schedule/", views.student_schedule),

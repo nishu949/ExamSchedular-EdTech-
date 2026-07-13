@@ -1,161 +1,211 @@
 import { useEffect, useState } from "react";
 import api from "../services/api";
 
+import RoomTable from "../components/rooms/RoomTable";
+import RoomForm from "../components/rooms/RoomForm";
+
 export default function Rooms() {
 
     const [rooms, setRooms] = useState([]);
 
-    const [form, setForm] = useState({
-        room_id: "",
-        capacity: ""
-    });
+    const [editing, setEditing] = useState(null);
 
-    const load = async () => {
+    const [showForm, setShowForm] = useState(false);
+
+    const [search, setSearch] = useState("");
+
+    const filteredRooms = rooms.filter((room) =>
+        room.room_id.toLowerCase().includes(search.toLowerCase())
+    );
+
+    const loadRooms = async () => {
+
         try {
+
             const res = await api.get("/rooms/");
+
             setRooms(res.data);
-        } catch (error) {
-            console.error(error);
-            alert("Failed to load rooms");
+
+        } catch (err) {
+
+            console.log(err);
+
         }
+
     };
 
     useEffect(() => {
-        load();
+
+        loadRooms();
+
     }, []);
 
-    const save = async () => {
+    const addRoom = async (data) => {
+
         try {
-            await api.post("/rooms/", form);
 
-            setForm({
-                room_id: "",
-                capacity: ""
-            });
+            await api.post("/rooms/", data);
 
-            load();
+            setShowForm(false);
 
-            alert("Room Added Successfully");
+            loadRooms();
 
-        } catch (error) {
-            console.error(error);
-            alert("Unable to add room");
         }
+
+        catch (err) {
+
+            console.log(err);
+
+            alert("Unable to add room");
+
+        }
+
     };
 
-    const remove = async (id) => {
+    const updateRoom = async (data) => {
+
+        try {
+
+            await api.put(
+
+                `/rooms/${editing.id}/`,
+
+                data
+
+            );
+
+            setEditing(null);
+
+            setShowForm(false);
+
+            loadRooms();
+
+        }
+
+        catch (err) {
+
+            console.log(err);
+
+            alert("Unable to update room");
+
+        }
+
+    };
+
+    const deleteRoom = async (id) => {
+
+        if (!window.confirm("Delete this room?"))
+
+            return;
+
         try {
 
             await api.delete(`/rooms/${id}/`);
 
-            load();
+            loadRooms();
 
-            alert("Room Deleted");
-
-        } catch (error) {
-            console.error(error);
-            alert("Unable to delete room");
         }
+
+        catch (err) {
+
+            console.log(err);
+
+        }
+
     };
 
     return (
-        <div className="container">
 
-            <h1>Room Management</h1>
+        <div className="space-y-6">
 
-            <div style={{ marginBottom: "20px" }}>
+            {/* Header */}
 
-                <input
-                    type="text"
-                    placeholder="Room ID"
-                    value={form.room_id}
-                    onChange={(e) =>
-                        setForm({
-                            ...form,
-                            room_id: e.target.value
-                        })
-                    }
-                />
+            <div className="flex justify-between items-center">
 
-                <input
-                    type="number"
-                    placeholder="Capacity"
-                    value={form.capacity}
-                    onChange={(e) =>
-                        setForm({
-                            ...form,
-                            capacity: e.target.value
-                        })
-                    }
-                    style={{ marginLeft: "10px" }}
-                />
+                <h1 className="text-3xl font-bold">
+
+                    Rooms
+
+                </h1>
 
                 <button
-                    onClick={save}
-                    style={{ marginLeft: "10px" }}
+
+                    onClick={() => {
+
+                        setEditing(null);
+
+                        setShowForm(true);
+
+                    }}
+
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg"
+
                 >
-                    Add Room
+
+                    + Add Room
+
                 </button>
 
             </div>
 
-            <table
-                border="1"
-                cellPadding="10"
-                cellSpacing="0"
-                width="100%"
-            >
+            {/* Form */}
 
-                <thead>
+            {showForm && (
 
-                    <tr>
-                        <th>Room ID</th>
-                        <th>Capacity</th>
-                        <th>Action</th>
-                    </tr>
+                <RoomForm
 
-                </thead>
+                    initialData={editing}
 
-                <tbody>
+                    onCancel={() => {
 
-                    {rooms.length > 0 ? (
+                        setEditing(null);
 
-                        rooms.map((r) => (
+                        setShowForm(false);
 
-                            <tr key={r.id}>
+                    }}
 
-                                <td>{r.room_id}</td>
+                    onSubmit={editing ? updateRoom : addRoom}
 
-                                <td>{r.capacity}</td>
+                />
 
-                                <td>
+            )}
 
-                                    <button
-                                        onClick={() => remove(r.id)}
-                                    >
-                                        Delete
-                                    </button>
+            {/* Search */}
 
-                                </td>
+            <input
 
-                            </tr>
+                type="text"
 
-                        ))
+                placeholder="Search Room..."
 
-                    ) : (
+                value={search}
 
-                        <tr>
-                            <td colSpan="3" style={{ textAlign: "center" }}>
-                                No Rooms Found
-                            </td>
-                        </tr>
+                onChange={(e) => setSearch(e.target.value)}
 
-                    )}
+                className="w-full md:w-96 rounded-lg border border-slate-300 px-4 py-2"
 
-                </tbody>
+            />
 
-            </table>
+            {/* Table */}
+
+            <RoomTable
+
+                rooms={filteredRooms}
+
+                onEdit={(room) => {
+
+                    setEditing(room);
+
+                    setShowForm(true);
+
+                }}
+
+                onDelete={deleteRoom}
+
+            />
 
         </div>
+
     );
+
 }

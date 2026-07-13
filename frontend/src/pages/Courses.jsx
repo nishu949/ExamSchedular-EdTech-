@@ -165,15 +165,21 @@ export default function Courses() {
                 />
 
             )}
-<div className="flex justify-between items-center gap-4">
+<div className="flex justify-between items-center mb-5">
 
     <input
         type="text"
-        placeholder="Search by course code or course name..."
+        placeholder="🔍 Search Course Code or Name..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        className="w-full md:w-96 rounded-lg border border-slate-300 px-4 py-2 focus:border-blue-500 focus:outline-none"
+        className="w-96 rounded-xl border border-slate-300 px-4 py-3 shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
     />
+
+    <span className="text-sm text-slate-500">
+
+        {filteredCourses.length} Course(s)
+
+    </span>
 
 </div>
 

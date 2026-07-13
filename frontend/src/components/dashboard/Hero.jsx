@@ -1,6 +1,6 @@
 import { CalendarDays, Sparkles } from "lucide-react";
 
-export default function Hero() {
+export default function Hero({ onGenerate }) {
   return (
     <section className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-indigo-600 via-blue-600 to-cyan-500 p-10 text-white shadow-2xl">
 
@@ -27,13 +27,12 @@ export default function Hero() {
 
           <div className="mt-8 flex flex-wrap gap-4">
 
-            <button className="rounded-xl bg-white px-6 py-3 font-semibold text-blue-700 transition hover:scale-105">
-              Generate Timetable
-            </button>
-
-            <button className="rounded-xl border border-white/40 px-6 py-3 font-semibold transition hover:bg-white/10">
-              View Schedule
-            </button>
+            <button
+    onClick={onGenerate}
+    className="rounded-xl bg-white px-6 py-3 font-semibold text-blue-700 transition hover:scale-105"
+>
+    Generate Timetable
+</button>
 
           </div>
 
@@ -53,9 +52,7 @@ export default function Hero() {
               Conflict-Free Scheduling
             </h3>
 
-            <p className="mt-2 text-center text-blue-100">
-              Powered by Python Scheduling Engine
-            </p>
+        
 
           </div>
 

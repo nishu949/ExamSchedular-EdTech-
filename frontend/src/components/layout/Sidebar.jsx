@@ -7,7 +7,7 @@ import {
     CalendarDays,
     FileText,
     ShieldAlert,
-    Settings,
+ 
 } from "lucide-react";
 
 import { NavLink } from "react-router-dom";
@@ -21,8 +21,9 @@ const menuItems = [
     { name: "Timetable", icon: CalendarDays, path: "/timetable" },
     { name: "Reports", icon: FileText, path: "/reports" },
     { name: "Conflicts", icon: ShieldAlert, path: "/conflicts" },
-    { name: "Settings", icon: Settings, path: "/settings" },
+    { name: "Student View", icon: GraduationCap, path: "/student-view" }
 ];
+
 
 export default function Sidebar() {
 
@@ -36,7 +37,7 @@ export default function Sidebar() {
 
                     <div className="h-11 w-11 rounded-xl bg-blue-600 flex items-center justify-center text-white font-bold">
 
-                        U
+                        E
 
                     </div>
 
@@ -44,7 +45,7 @@ export default function Sidebar() {
 
                         <h1 className="text-lg font-bold text-slate-800">
 
-                            UniScheduler
+                           ExamScheduler
 
                         </h1>
 

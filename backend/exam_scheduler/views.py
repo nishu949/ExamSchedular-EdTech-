@@ -1,7 +1,12 @@
+#The backend exposes RESTful APIs using Django REST Framework (DRF) for mobile integration. 
+# APIs such as Student Schedule, Timetable, Search, Dashboard, and Reports return JSON responses, 
+# enabling future Android or iOS applications to access examination data securely and efficiently
+
 from django.http import HttpResponse
 from reportlab.lib import colors
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
-
+from .scheduler import ScheduleEngine
+from .conflicts import check_conflicts
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
@@ -23,16 +28,101 @@ from .serializers import (
     StudentSerializer,
     TimetableSerializer
 )
+from django.db.models import Q
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
-from .scheduler import (
-    ScheduleEngine,
-    check_conflicts
-)
+@api_view(["GET"])
+def search(request):
+
+    q = request.GET.get("q", "").strip()
+
+    if not q:
+        return Response([])
+
+    results = []
+
+    # Courses
+    for course in Course.objects(
+        __raw__={
+            "$or": [
+                {"course_code": {"$regex": q, "$options": "i"}},
+                {"course_name": {"$regex": q, "$options": "i"}},
+            ]
+        }
+    ):
+        results.append({
+            "type": "Course",
+            "title": course.course_code,
+            "subtitle": course.course_name,
+            "page": "/courses"
+        })
+
+    # Rooms
+    for room in Room.objects(
+        room_id__icontains=q
+    ):
+        results.append({
+            "type": "Room",
+            "title": room.room_id,
+            "subtitle": f"Capacity: {room.capacity}",
+            "page": "/rooms"
+        })
+
+    # Faculty
+    for faculty in Faculty.objects(
+        __raw__={
+            "$or": [
+                {"faculty_name": {"$regex": q, "$options": "i"}},
+                {"faculty_id": {"$regex": q, "$options": "i"}},
+            ]
+        }
+    ):
+        results.append({
+            "type": "Faculty",
+            "title": faculty.faculty_name,
+            "subtitle": faculty.department,
+            "page": "/faculty"
+        })
+
+    # Students
+    for student in Student.objects(
+        __raw__={
+            "$or": [
+                {"student_name": {"$regex": q, "$options": "i"}},
+                {"student_id": {"$regex": q, "$options": "i"}},
+            ]
+        }
+    ):
+        results.append({
+            "type": "Student",
+            "title": student.student_name,
+            "subtitle": student.student_id,
+            "page": "/students"
+        })
+
+    # Timetable
+    for exam in Timetable.objects(
+        __raw__={
+            "$or": [
+                {"course_code": {"$regex": q, "$options": "i"}},
+                {"room_id": {"$regex": q, "$options": "i"}},
+                {"faculty": {"$regex": q, "$options": "i"}},
+            ]
+        }
+    ):
+        results.append({
+            "type": "Timetable",
+            "title": exam.course_code,
+            "subtitle": f"{exam.exam_date} • {exam.exam_time}",
+            "page": "/timetable"
+        })
+
+    return Response(results)
 
 
-# ===========================
 # COURSE CRUD
-# ===========================
+
 
 @api_view(["GET", "POST"])
 def courses(request):
@@ -88,9 +178,9 @@ def delete_course(request, id):
         )
 
 
-# ===========================
+
 # ROOM CRUD
-# ===========================
+
 
 @api_view(["GET", "POST"])
 def rooms(request):
@@ -123,12 +213,45 @@ def rooms(request):
     )
 
 
-@api_view(["DELETE"])
-def delete_room(request, id):
+@api_view(["GET", "PUT", "DELETE"])
+def room_detail(request, id):
 
     try:
 
         room = Room.objects.get(id=id)
+
+    except DoesNotExist:
+
+        return Response(
+            {"error": "Room not found"},
+            status=status.HTTP_404_NOT_FOUND
+        )
+
+    if request.method == "GET":
+
+        serializer = RoomSerializer(room)
+
+        return Response(serializer.data)
+
+    elif request.method == "PUT":
+
+        serializer = RoomSerializer(
+            room,
+            data=request.data
+        )
+
+        if serializer.is_valid():
+
+            serializer.save()
+
+            return Response(serializer.data)
+
+        return Response(
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    elif request.method == "DELETE":
 
         room.delete()
 
@@ -136,19 +259,9 @@ def delete_room(request, id):
             "message": "Room deleted"
         })
 
-    except DoesNotExist:
 
-        return Response(
-            {
-                "error": "Room not found"
-            },
-            status=status.HTTP_404_NOT_FOUND
-        )
-
-
-# ===========================
 # FACULTY CRUD
-# ===========================
+
 
 @api_view(["GET", "POST"])
 def faculties(request):
@@ -181,31 +294,49 @@ def faculties(request):
     )
 
 
-@api_view(["DELETE"])
-def delete_faculty(request, id):
+@api_view(["GET", "PUT", "DELETE"])
+def faculty_detail(request, id):
 
     try:
-
         faculty = Faculty.objects.get(id=id)
+
+    except DoesNotExist:
+        return Response(
+            {"error": "Faculty not found"},
+            status=status.HTTP_404_NOT_FOUND
+        )
+
+    if request.method == "GET":
+
+        serializer = FacultySerializer(faculty)
+        return Response(serializer.data)
+
+    elif request.method == "PUT":
+
+        serializer = FacultySerializer(
+            faculty,
+            data=request.data
+        )
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+
+        return Response(
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    elif request.method == "DELETE":
 
         faculty.delete()
 
         return Response({
             "message": "Faculty deleted"
         })
-
-    except DoesNotExist:
-
-        return Response(
-            {
-                "error": "Faculty not found"
-            },
-            status=status.HTTP_404_NOT_FOUND
-        )
     
-    # ===========================
 # STUDENT CRUD
-# ===========================
+
 
 @api_view(["GET", "POST"])
 def students(request):
@@ -238,32 +369,54 @@ def students(request):
     )
 
 
-@api_view(["DELETE"])
-def delete_student(request, id):
+@api_view(["GET", "PUT", "DELETE"])
+def student_detail(request, id):
 
     try:
 
         student = Student.objects.get(id=id)
 
-        student.delete()
-
-        return Response({
-            "message": "Student deleted"
-        })
-
     except DoesNotExist:
 
         return Response(
-            {
-                "error": "Student not found"
-            },
+            {"error": "Student not found"},
             status=status.HTTP_404_NOT_FOUND
         )
 
+    if request.method == "GET":
 
-# ===========================
+        serializer = StudentSerializer(student)
+
+        return Response(serializer.data)
+
+    elif request.method == "PUT":
+
+        serializer = StudentSerializer(
+            student,
+            data=request.data
+        )
+
+        if serializer.is_valid():
+
+            serializer.save()
+
+            return Response(serializer.data)
+
+        return Response(
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    student.delete()
+
+    return Response({
+        "message": "Student deleted"
+    })
+
+
+
 # TIMETABLE CRUD
-# ===========================
+
 
 @api_view(["GET", "POST"])
 def timetable(request):
@@ -321,9 +474,9 @@ def timetable(request):
     )
 
 
-# ===========================
+
 # GENERATE TIMETABLE
-# ===========================
+
 
 @api_view(["POST"])
 def generate_timetable(request):
@@ -332,12 +485,17 @@ def generate_timetable(request):
 
         engine = ScheduleEngine()
 
-        engine.generate()
+        result = engine.generate()
+
+        conflicts = check_conflicts()
 
         return Response({
 
-            "message":
-            "Timetable generated successfully."
+            "message": result["message"],
+
+            "conflicts": conflicts,
+
+            "total_conflicts": len(conflicts)
 
         })
 
@@ -346,7 +504,9 @@ def generate_timetable(request):
         return Response(
 
             {
+
                 "error": str(e)
+
             },
 
             status=status.HTTP_400_BAD_REQUEST
@@ -354,9 +514,9 @@ def generate_timetable(request):
         )
 
 
-# ===========================
+
 # STUDENT SCHEDULE
-# ===========================
+
 
 @api_view(["GET"])
 def student_schedule(request):
@@ -390,9 +550,9 @@ def student_schedule(request):
 
     return Response(serializer.data)
 
-# ===========================
+
 # SEARCH TIMETABLE
-# ===========================
+
 
 @api_view(["GET"])
 def search_timetable(request):
@@ -420,9 +580,9 @@ def search_timetable(request):
     return Response(serializer.data)
 
 
-# ===========================
+
 # DASHBOARD
-# ===========================
+
 
 @api_view(["GET"])
 def dashboard(request):

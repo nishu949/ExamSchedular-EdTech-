@@ -1,3 +1,5 @@
+// # Case 5:A React-based Admin Dashboard allows administrators to manage courses, rooms, faculty, students, 
+// and generate the exam timetable
 import { useEffect, useState } from "react";
 import api from "../services/api";
 import UpcomingExams from "../components/dashboard/UpcomingExams";
@@ -73,31 +75,39 @@ const loadDashboard = async () => {
     loadDashboard();
   }, []);
 
-  const generateTimetable = async () => {
+const generateTimetable = async () => {
+
+    console.log("Generate button clicked");
 
     try {
 
-      await api.post("/generate/");
+        const res = await api.post("/generate/");
 
-      alert("Timetable Generated Successfully");
+        console.log(res.data);
 
-      loadDashboard();
+        alert("Timetable Generated Successfully");
 
-    } catch (err) {
+        loadDashboard();
 
-      console.error(err);
-
-      alert("Generation Failed");
     }
-  };
+
+catch (err) {
+
+    console.log(err);
+
+    console.log(err.response);
+
+    console.log(err.response.data);
+
+    alert(err.response.data.error);
+
+}
+
+};
 
 const downloadReport = () => {
 
-    window.open(
-
-        "http://127.0.0.1:8000/api/report/download/"
-
-    );
+   window.open("http://127.0.0.1:8000/api/report/", "_blank");
 
 };
 
@@ -105,7 +115,7 @@ const downloadReport = () => {
 
     <div className="space-y-8">
 
-      <Hero />
+      <Hero onGenerate={generateTimetable} />
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
 
