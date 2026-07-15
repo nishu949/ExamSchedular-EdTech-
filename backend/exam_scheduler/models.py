@@ -18,6 +18,7 @@ from mongoengine import (
     ListField
 )
 from datetime import datetime
+from mongoengine import Document, StringField, EmailField
 
 # CASE 3.1:Requirement: Course, Room, ScheduleEngine classes
 class Course(Document):
@@ -99,7 +100,7 @@ class Student(Document):
     student_name = StringField(required=True)
 
     department = StringField(required=True)
-
+    password = StringField(required=True)
     enrolled_courses = ListField(
         StringField()
     )
@@ -123,4 +124,14 @@ class Timetable(Document):
 
     meta = {
         "collection": "timetable"
+    }
+
+
+class Admin(Document):
+    username = StringField(required=True, unique=True)
+    email = EmailField(required=True, unique=True)
+    password = StringField(required=True)
+
+    meta = {
+        "collection": "admins"
     }

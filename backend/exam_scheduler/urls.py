@@ -42,4 +42,9 @@ urlpatterns = [
     path("report/", views.download_report),
     path("report/room/", views.room_report),
     path("report/date/", views.date_report),
+
+    path("admin/register/", views.admin_register),
+path("student/register/", views.student_register),
+path("admin/login/", views.admin_login),
+path("student/login/", views.student_login),
 ]

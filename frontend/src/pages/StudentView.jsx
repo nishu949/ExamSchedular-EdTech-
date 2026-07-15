@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import api from "../services/api";
 
 export default function StudentView() {
@@ -6,7 +6,7 @@ export default function StudentView() {
     const [studentId, setStudentId] = useState("");
     const [schedule, setSchedule] = useState([]);
     const [error, setError] = useState("");
-
+    const user = JSON.parse(localStorage.getItem("user"));
     const loadSchedule = async () => {
 
     if (!studentId) return;
@@ -30,6 +30,21 @@ export default function StudentView() {
 
 };
 
+useEffect(() => {
+
+    if (user?.role === "student") {
+
+        setStudentId(user.student_id);
+
+        api
+            .get(`/student-schedule/?student_id=${user.student_id}`)
+            .then((res) => setSchedule(res.data))
+            .catch(() => setError("Unable to load schedule"));
+
+    }
+
+}, []);
+
     return (
 
         <div className="space-y-6">
@@ -37,32 +52,38 @@ export default function StudentView() {
             <div className="flex justify-between items-center">
 
                <div>
-    <h1 className="text-3xl font-bold text-slate-800">
-        Student Schedule
-    </h1>
+   <h1 className="text-3xl font-bold text-slate-800">
+    {user?.role === "student"
+        ? "My Exam Schedule"
+        : "Student Schedule"}
+</h1>
 
-    <p className="text-slate-500 mt-1">
-        View a student's personalized examination timetable.
-    </p>
+<p className="text-slate-500 mt-1">
+    {user?.role === "student"
+        ? `Welcome ${user.student_name}`
+        : "View a student's personalized examination timetable."}
+</p>
 </div>
 
             </div>
 
-           <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+  {user?.role !== "student" && (
+
+<div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
 
     <div className="flex items-center gap-4">
 
-       <input
-    value={studentId}
-    onChange={(e) => setStudentId(e.target.value)}
-    onKeyDown={(e) => {
-        if (e.key === "Enter") {
-            loadSchedule();
-        }
-    }}
-    placeholder="Enter Student ID (e.g. S001)"
-    className="flex-1 rounded-xl border border-slate-300 px-5 py-3 focus:ring-2 focus:ring-blue-200 focus:border-blue-500 outline-none transition"
-/>
+        <input
+            value={studentId}
+            onChange={(e) => setStudentId(e.target.value)}
+            onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                    loadSchedule();
+                }
+            }}
+            placeholder="Enter Student ID (e.g. S001)"
+            className="flex-1 rounded-xl border border-slate-300 px-5 py-3 focus:ring-2 focus:ring-blue-200 focus:border-blue-500 outline-none transition"
+        />
 
         <button
             onClick={loadSchedule}
@@ -74,6 +95,8 @@ export default function StudentView() {
     </div>
 
 </div>
+
+)}
 
             {error && (
 
@@ -91,10 +114,10 @@ export default function StudentView() {
     <div>
 
         <h3 className="font-semibold text-slate-800">
-
-            Student ID
-
-        </h3>
+    {user?.role === "student"
+        ? "My Student ID"
+        : "Student ID"}
+</h3>
 
         <p className="text-blue-700 text-lg font-bold">
 

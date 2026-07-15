@@ -10,7 +10,7 @@ from .conflicts import check_conflicts
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-
+from .serializers import AdminSerializer, StudentSerializer
 from mongoengine.errors import DoesNotExist
 
 from .models import (
@@ -18,7 +18,8 @@ from .models import (
     Room,
     Faculty,
     Student,
-    Timetable
+    Timetable,
+    Admin
 )
 
 from .serializers import (
@@ -31,6 +32,110 @@ from .serializers import (
 from django.db.models import Q
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+
+
+
+@api_view(["POST"])
+def admin_register(request):
+
+    serializer = AdminSerializer(data=request.data)
+
+    if serializer.is_valid():
+
+        serializer.save()
+
+        return Response(
+            {
+                "success": True,
+                "message": "Admin registered successfully"
+            },
+            status=status.HTTP_201_CREATED
+        )
+
+    return Response(
+        serializer.errors,
+        status=status.HTTP_400_BAD_REQUEST
+    )
+
+@api_view(["POST"])
+def student_register(request):
+
+    serializer = StudentSerializer(data=request.data)
+
+    if serializer.is_valid():
+
+        serializer.save()
+
+        return Response(
+            {
+                "success": True,
+                "message": "Student registered successfully"
+            },
+            status=status.HTTP_201_CREATED
+        )
+
+    return Response(
+        serializer.errors,
+        status=status.HTTP_400_BAD_REQUEST
+    )
+
+
+@api_view(["POST"])
+def admin_login(request):
+
+    username = request.data.get("username")
+    password = request.data.get("password")
+
+    admin = Admin.objects(
+        username=username,
+        password=password
+    ).first()
+
+    if admin:
+
+        return Response({
+            "success": True,
+            "role": "admin",
+            "username": admin.username,
+            "email": admin.email
+        })
+
+    return Response(
+        {
+            "success": False,
+            "message": "Invalid username or password"
+        },
+        status=status.HTTP_401_UNAUTHORIZED
+    )
+
+@api_view(["POST"])
+def student_login(request):
+
+    student_id = request.data.get("student_id")
+    password = request.data.get("password")
+
+    student = Student.objects(
+        student_id=student_id,
+        password=password
+    ).first()
+
+    if student:
+
+        return Response({
+            "success": True,
+            "role": "student",
+            "student_id": student.student_id,
+            "student_name": student.student_name,
+            "department": student.department
+        })
+
+    return Response(
+        {
+            "success": False,
+            "message": "Invalid Student ID or Password"
+        },
+        status=status.HTTP_401_UNAUTHORIZED
+    )
 
 @api_view(["GET"])
 def search(request):

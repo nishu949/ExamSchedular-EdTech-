@@ -5,9 +5,24 @@ from .models import (
     Room,
     Faculty,
     Student,
-    Timetable
+    Timetable,
+    Admin
 )
 
+class AdminSerializer(serializers.Serializer):
+
+    id = serializers.CharField(read_only=True)
+
+    username = serializers.CharField()
+
+    email = serializers.EmailField()
+
+    password = serializers.CharField()
+
+    def create(self, validated_data):
+
+        return Admin(**validated_data).save()
+    
 
 class CourseSerializer(serializers.Serializer):
 
@@ -158,7 +173,7 @@ class StudentSerializer(serializers.Serializer):
     student_name = serializers.CharField()
 
     department = serializers.CharField()
-
+    password = serializers.CharField(write_only=True)
     enrolled_courses = serializers.ListField(
         child=serializers.CharField()
     )
