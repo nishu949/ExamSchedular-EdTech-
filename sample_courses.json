@@ -1,0 +1,46 @@
+[{
+  "_id": {
+    "$oid": "6a4e0a2ddcb1cd36d0f810b5"
+  },
+  "course_code": "CS102",
+  "course_name": "Database Management Systems",
+  "faculty": "Dr. Patil",
+  "students": [
+    "S002"
+  ],
+  "student_count": 1
+},
+{
+  "_id": {
+    "$oid": "6a4e0af5dcb1cd36d0f810b6"
+  },
+  "course_code": "CS101",
+  "course_name": "Data Structures",
+  "faculty": "Dr. Sharma",
+  "students": [
+    "S001"
+  ],
+  "student_count": 1
+},
+{
+  "_id": {
+    "$oid": "6a4e691d9ffbbcef3bbb9141"
+  },
+  "course_code": "CS103",
+  "course_name": "java",
+  "faculty": "Dr. Sharma",
+  "students": [
+    "S003"
+  ],
+  "student_count": 0
+},
+{
+  "_id": {
+    "$oid": "6a56f24a3afef1bfb433b0a5"
+  },
+  "course_code": "CS104",
+  "course_name": "MERN",
+  "faculty": "Rashika",
+  "students": [],
+  "student_count": 0
+}]

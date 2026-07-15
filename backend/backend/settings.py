@@ -6,7 +6,7 @@ connect(
 )
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+WSGI_APPLICATION = 'backend.wsgi.application'
 
 SECRET_KEY = "django-dev-key"
 
@@ -75,7 +75,15 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'backend.wsgi.application'
 
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
+    }
+}
 
+
+LANGUAGE_CODE = 'en-us'
 
 
 LANGUAGE_CODE = 'en-us'

@@ -1,0 +1,48 @@
+[{
+  "_id": {
+    "$oid": "6a56f62133508d4f3fdaefcf"
+  },
+  "course_code": "CS102",
+  "faculty": "Dr. Patil",
+  "room_id": "A101",
+  "exam_date": {
+    "$date": "2026-07-15T00:00:00.000Z"
+  },
+  "exam_time": "10:00"
+},
+{
+  "_id": {
+    "$oid": "6a56f62133508d4f3fdaefd0"
+  },
+  "course_code": "CS101",
+  "faculty": "Dr. Sharma",
+  "room_id": "A101",
+  "exam_date": {
+    "$date": "2026-07-15T00:00:00.000Z"
+  },
+  "exam_time": "14:00"
+},
+{
+  "_id": {
+    "$oid": "6a56f62133508d4f3fdaefd1"
+  },
+  "course_code": "CS103",
+  "faculty": "Dr. Sharma",
+  "room_id": "A101",
+  "exam_date": {
+    "$date": "2026-07-16T00:00:00.000Z"
+  },
+  "exam_time": "10:00"
+},
+{
+  "_id": {
+    "$oid": "6a56f62133508d4f3fdaefd2"
+  },
+  "course_code": "CS104",
+  "faculty": "Rashika",
+  "room_id": "A101",
+  "exam_date": {
+    "$date": "2026-07-16T00:00:00.000Z"
+  },
+  "exam_time": "14:00"
+}]

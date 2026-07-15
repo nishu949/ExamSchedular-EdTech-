@@ -1,0 +1,46 @@
+[{
+  "_id": {
+    "$oid": "6a56f2b63afef1bfb433b0a8"
+  },
+  "student_id": "S003",
+  "student_name": "Saniya Shaikh",
+  "department": "MCA",
+  "enrolled_courses": [
+    "CS101",
+    "CS103"
+  ]
+},
+{
+  "_id": {
+    "$oid": "6a56f2df3afef1bfb433b0a9"
+  },
+  "student_id": "S004",
+  "student_name": "Pooja",
+  "department": "MBA",
+  "enrolled_courses": [
+    "CS101"
+  ]
+},
+{
+  "_id": {
+    "$oid": "6a56f5ea33508d4f3fdaefcd"
+  },
+  "student_id": "S001",
+  "student_name": "Nishad Shaikh",
+  "department": "Computer Science",
+  "enrolled_courses": [
+    "CS101",
+    "CS103"
+  ]
+},
+{
+  "_id": {
+    "$oid": "6a56f61733508d4f3fdaefce"
+  },
+  "student_id": "S002",
+  "student_name": "Aarti Sinha",
+  "department": "Computer Application",
+  "enrolled_courses": [
+    "CS101"
+  ]
+}]

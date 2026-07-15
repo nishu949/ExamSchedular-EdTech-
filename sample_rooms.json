@@ -1,0 +1,28 @@
+[{
+  "_id": {
+    "$oid": "6a490bbe6350f8c1a44d67ee"
+  },
+  "room_id": "A103",
+  "capacity": 90
+},
+{
+  "_id": {
+    "$oid": "6a4d0d3b4364ba9e64f05784"
+  },
+  "room_id": "A101",
+  "capacity": 60
+},
+{
+  "_id": {
+    "$oid": "6a4d0d4b4364ba9e64f05785"
+  },
+  "room_id": "A102",
+  "capacity": 100
+},
+{
+  "_id": {
+    "$oid": "6a56f2653afef1bfb433b0a6"
+  },
+  "room_id": "A104",
+  "capacity": 70
+}]
