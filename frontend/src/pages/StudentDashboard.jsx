@@ -58,9 +58,9 @@ export default function StudentDashboard() {
 
             </div>
 
-          <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-8 text-white">
+          <div className="bg-gradient-to-r from-blue-700 via-indigo-700 to-purple-700 rounded-3xl p-10 shadow-xl">
 
-    <h1 className="text-4xl font-bold">
+    <h1 className="text-5xl font-extrabold tracking-wide">
         Welcome, {user.student_name}
     </h1>
 
@@ -73,11 +73,11 @@ export default function StudentDashboard() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
 
-                <div className="bg-white rounded-xl shadow p-6">
+                <div className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition duration-300 p-6 border border-slate-100">
 
                     <h3 className="text-slate-500">Total Exams</h3>
 
-                    <p className="text-3xl font-bold mt-2">
+                    <p className="text-4xl font-bold text-blue-700 mt-3">
                         {schedule.length}
                     </p>
 
@@ -104,7 +104,7 @@ export default function StudentDashboard() {
                 </div>
 
             </div>
-            <div className="flex justify-between items-center mb-4">
+            <div className="flex justify-between items-center mt-10 mb-5">
 
                 <h2 className="text-xl font-semibold">
 
@@ -112,15 +112,10 @@ export default function StudentDashboard() {
 
                 </h2>
 
-                <button
-                    className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
-                >
-                    View Full Schedule
-                </button>
 
             </div>
 
-            <div className="mt-8 bg-white rounded-xl shadow p-6">
+            <div className="mt-6 bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
 
                 <h2 className="text-xl font-semibold mb-4">
 
@@ -130,14 +125,14 @@ export default function StudentDashboard() {
 
                 <table className="w-full">
 
-                    <thead>
+                    <thead className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
 
                         <tr className="border-b">
 
-                            <th className="text-left py-3">Course</th>
-                            <th className="text-left py-3">Date</th>
-                            <th className="text-left py-3">Time</th>
-                            <th className="text-left py-3">Room</th>
+                            <th className="text-left px-6 py-4 font-semibold">Course</th>
+                            <th className="text-left px-6 py-4 font-semibold">Date</th>
+                            <th className="text-left px-6 py-4 font-semibold">Time</th>
+                            <th className="text-left px-6 py-4 font-semibold">Room</th>
 
                         </tr>
 
@@ -165,9 +160,9 @@ export default function StudentDashboard() {
                             schedule.map((exam) => (
 
                                 <tr
-                                    key={exam.id}
-                                    className="border-b"
-                                >
+    key={exam.id}
+    className="border-b hover:bg-slate-50 transition"
+>
 
                                     <td className="py-3">
 
