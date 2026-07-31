@@ -468,8 +468,43 @@ http://localhost:5173
 ```
 
 ---
-
+## 🌐 Deployment Details
 # API Endpoints
+# Live URLs
+```
+Service	          URL
+
+Frontend	      https://exam-scheduler-frontend.onrender.com
+Backend API       https://exam-scheduler-api.onrender.com
+Swagger Docs	  https://exam-scheduler-api.onrender.com/swagger/
+```
+## Deployment Configuration
+# Backend (Render Web Service)
+```
+Setting	Value :
+
+Name	             exam-scheduler-api
+Root Directory	     backend
+Build Command	     ./build.sh
+Start Command	     gunicorn backend.wsgi:application
+
+```
+
+# Frontend (Render Static Site)
+
+```
+Setting	            Value
+Name	            exam-scheduler-frontend
+Root Directory	    frontend
+Build Command	    npm install && npm run build
+Publish Directory	build
+```
+# Test Credentials
+```
+Role	         Username/ID	        Password
+Admin	         admin	                admin123
+Student	         S001	                student123
+```
 
 ## Dashboard
 
@@ -490,7 +525,7 @@ Response
 ```
 
 ---
-
+## 📡 API Endpoints
 ## Courses
 
 ### GET
@@ -764,7 +799,12 @@ Reports & Student View
 ![Room Reports](screenshots/RoomReport.png)
 
 ---
+## Platform
+Hosting Provider: Render
 
+Database: MongoDB Atlas
+
+Repository: GitHub
 # Future Enhancements
 
 - Email Notifications
@@ -787,4 +827,4 @@ Master of Computer Application
 
 # License
 
-This project is develop
+This project is develop for educational purposes.
