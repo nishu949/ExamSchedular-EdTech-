@@ -474,9 +474,23 @@ http://localhost:5173
 ```
 Service	          URL
 
-Frontend	      https://exam-scheduler-frontend.onrender.com
-Backend API       https://exam-scheduler-api.onrender.com
+Frontend	      https://exam-scheduler-frontend-2elg.onrender.com
+Backend API       https://examschedular-edtech.onrender.com
 Swagger Docs	  https://exam-scheduler-api.onrender.com/swagger/
+```
+
+## Complete URLs
+```
+Service           |      	URL
+
+🌐 Frontend                https://exam-scheduler-frontend-2elg.onrender.com
+🔧 Backend API	           https://examschedular-edtech.onrender.com
+Dashboard	               https://examschedular-edtech.onrender.com/api/dashboard/
+Courses	                   https://examschedular-edtech.onrender.com/api/courses/
+Rooms	                   https://examschedular-edtech.onrender.com/api/rooms/
+Faculty	                   https://examschedular-edtech.onrender.com/api/faculties/
+Students	               https://examschedular-edtech.onrender.com/api/students/
+Timetable	               https://examschedular-edtech.onrender.com/api/timetable/
 ```
 ## Deployment Configuration
 # Backend (Render Web Service)
