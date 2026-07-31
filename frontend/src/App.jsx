@@ -5,7 +5,8 @@ import {
     Navigate
 } from "react-router-dom";
 import StudentLayout from "./layouts/StudentLayout";
-import DashboardLayout from "./layouts/DashboardLayout";
+
+import DashboardLayout from "./layouts/DashBoardLayout";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Courses from "./pages/Courses";
